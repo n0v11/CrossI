@@ -13,7 +13,7 @@ namespace CrossI
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             string path = @"..\..\..\text.txt";
-            string[] splitedArr = File.ReadAllText(path).ToLower().Split(" ");
+            string[] splitedArr = File.ReadAllText(path).ToLower().Split(" "); // В задании не указано в каком регистре и чем разделены слова.
             Dictionary<string, int> tripletsDict = new Dictionary<string, int>();
 
             if (splitedArr.Length > 2)
@@ -46,42 +46,3 @@ namespace CrossI
         }
     }
 }
-
-//Stopwatch stopwatch = new Stopwatch();
-//stopwatch.Start();
-//string path = @"..\..\..\text.txt";
-//string[] splitedArr = File.ReadAllText(path).ToLower().Split(" ");
-//Dictionary<string, int> tripletsDict = new Dictionary<string, int>();
-
-//if (splitedArr.Length > 2)
-//{
-//    for (int i = 2; i < splitedArr.Length; i++)
-//    {
-//        string triplet = splitedArr[i - 2] + " " +
-//                         splitedArr[i - 1] + " " +
-//                         splitedArr[i];
-
-//        if (!tripletsDict.ContainsKey(triplet))
-//        {
-//            tripletsDict.Add(triplet, 1);
-
-//        }
-//        else
-//        {
-//            tripletsDict[triplet]++;
-
-//        }
-//    }
-//}
-//else
-//{
-//    Console.WriteLine("Слишком мало элементов для выполнения задачи.");
-//}
-
-//tripletsDict = tripletsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-//foreach (var (key, value) in tripletsDict)
-//{
-//    Console.WriteLine($"{key} - {value}");
-//}
-//Console.WriteLine(stopwatch.ElapsedMilliseconds);
-//stopwatch.Stop();
