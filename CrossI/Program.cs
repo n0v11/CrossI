@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CrossI
 {
@@ -10,39 +11,40 @@ namespace CrossI
     {
         static void Main()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            string path = @"..\..\..\text.txt";
-            string[] splitedArr = File.ReadAllText(path).ToLower().Split(" "); // В задании не указано в каком регистре и чем разделены слова.
-            Dictionary<string, int> tripletsDict = new Dictionary<string, int>();
+            string textPath = @"..\..\..\text.txt"; // some text with spaces
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            string[] splitedArr = File.ReadAllText(textPath).ToLower()
+                        .Split(" "); // В задании нет информации о форматировании исходных данных.
 
-            if (splitedArr.Length > 2)
+            ConcurrentDictionary<string, int> tripletsDict = TripletsAddOrUpdateToDict(splitedArr);
+            int counter = 1;
+            foreach (var (key, value) in tripletsDict.OrderByDescending(x => x.Value))
             {
-                for (int i = 0; i < splitedArr.Length; i++)
-                {
-                    string word = splitedArr[i];
-                    for (int m = 2; m < word.Length; m++)
-                    {
-                        string triplet = new (new[] {word[m - 2], word[m - 1], word[m]});
-                        if (!tripletsDict.ContainsKey(triplet))
-                        {
-                            tripletsDict.Add(triplet, 1);
-                        }
-                        else
-                        {
-                            tripletsDict[triplet]++;
-                        }
-                    }
-                }
+                //Console.Write($"{key} - {value}, ");
+                Console.Write($"{key}, ");
+                if (counter > 9)
+                    break;
+                counter++;
             }
 
-            tripletsDict = tripletsDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-            foreach (var (key, value) in tripletsDict)
-            {
-                Console.Write($"{key} - {value}, ");
-            }
-            Console.WriteLine("\n" + stopwatch.ElapsedMilliseconds);
             stopwatch.Stop();
+            Console.WriteLine($"\n{stopwatch.ElapsedMilliseconds} мс");
+            Console.ReadKey();
         }
+
+        private static ConcurrentDictionary<string, int> TripletsAddOrUpdateToDict(string[] splitedArr) // "программа должна обрабатывать текст в многопоточном режиме"
+        {
+            ConcurrentDictionary<string, int> tripletsDict = new();
+            Parallel.ForEach(splitedArr, word => //new ParallelOptions() {MaxDegreeOfParallelism = Environment.ProcessorCount }
+            {
+                for (int i = 2; i < word.Length; i++)
+                {
+                    string triplet = new string(new char[] { word[i - 2], word[i - 1], word[i] });
+                    tripletsDict.AddOrUpdate(triplet, 1, (key, oldValue) => oldValue + 1);
+                }
+            });
+            return tripletsDict;
+        }
+
     }
 }
