@@ -32,10 +32,11 @@ namespace CrossI
             Console.ReadKey();
         }
 
-        private static ConcurrentDictionary<string, int> TripletsAddOrUpdateToDict(string[] splitedArr) // "программа должна обрабатывать текст в многопоточном режиме"
+        private static ConcurrentDictionary<string, int> TripletsAddOrUpdateToDict(string[] splitedArr)
         {
             ConcurrentDictionary<string, int> tripletsDict = new();
-            Parallel.ForEach(splitedArr, word => //new ParallelOptions() {MaxDegreeOfParallelism = Environment.ProcessorCount }
+            //Parallel.ForEach(splitedArr, word => //new ParallelOptions() {MaxDegreeOfParallelism = Environment.ProcessorCount }
+            splitedArr.AsParallel().ForAll( word =>
             {
                 for (int i = 2; i < word.Length; i++)
                 {
